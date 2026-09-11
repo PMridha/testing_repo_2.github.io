@@ -5,25 +5,52 @@ const fields = [
   "Annual_Rainfall_Normal_mm","Rainfall_Pattern","Soil_Distribution","Vegetation"
 ];
 
-async function loadModel(){
-  const response = await fetch("model.json");
-  MODEL = await response.json();
+async function loadModel() {
+    const response = await fetch("model.json");
+    MODEL = await response.json();
 
-  for (const col of MODEL.categorical) {
-    const select = document.getElementById(col);
-    select.innerHTML = "";
-    MODEL.mappings[col].forEach(v => {
-      const option = document.createElement("option");
-      option.value = v;
-      option.textContent = v;
-      select.appendChild(option);
-    });
-  }
+    for (const col of MODEL.categorical) {
 
-  // Make district follow the selected state where possible.
-  const state = document.getElementById("State");
-  state.addEventListener("change", updateDistricts);
-  updateDistricts();
+        const select = document.getElementById(col);
+        select.innerHTML = "";
+
+        // Make a separate copy of the options
+        let options = [...MODEL.mappings[col]];
+
+        // Remove ONLY the unwanted Rainfall Pattern option
+        if (col === "Rainfall_Pattern") {
+            options = options.filter(v =>
+                !String(v).startsWith("2018 13966 KER/IDK/58B16/2018/08")
+            );
+        }
+
+        // Remove ONLY these two Soil Distribution options
+        if (col === "Soil_Distribution") {
+            options = options.filter(v => {
+                const value = String(v).trim();
+                return value !== "2018" && value !== "29 Phulban";
+            });
+        }
+
+        // Add all remaining options
+        options.forEach(v => {
+            const option = document.createElement("option");
+
+            option.value = v;
+            option.textContent = v;
+
+            select.appendChild(option);
+        });
+    }
+
+    const state = document.getElementById("State");
+
+    state.addEventListener(
+        "change",
+        updateDistricts
+    );
+
+    updateDistricts();
 }
 
 function updateDistricts(){
