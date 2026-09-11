@@ -20,7 +20,7 @@ async function loadModel() {
         // Remove ONLY the unwanted Rainfall Pattern option
         if (col === "Rainfall_Pattern") {
             options = options.filter(v =>
-                !String(v).startsWith("2018 13966 KER/IDK/58B16/2018/08")
+                !String(v).startsWith("2018 13966 KER/IDK/58B16/2018/08") && String(v).trim() !== "RD"
             );
         }
 
