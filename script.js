@@ -12,11 +12,26 @@ async function loadModel(){
   for (const col of MODEL.categorical) {
     const select = document.getElementById(col);
     select.innerHTML = "";
-    MODEL.mappings[col].forEach(v => {
-      const option = document.createElement("option");
-      option.value = v;
-      option.textContent = v;
-      select.appendChild(option);
+    let options = MODEL.mappings[col];
+
+if (col === "Rainfall_Pattern") {
+    options = options.filter(v =>
+        !v.startsWith("2018 13966 KER/IDK/58B16/2018/08")
+    );
+}
+
+if (col === "Soil_Distribution") {
+    options = options.filter(v =>
+        v !== "2018" && v !== "29 Phulban"
+    );
+}
+
+options.forEach(v => {
+    const option = document.createElement("option");
+    option.value = v;
+    option.textContent = v;
+    select.appendChild(option);
+});
     });
   }
 
